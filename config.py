@@ -1,0 +1,2 @@
+BOT_TOKEN="7947549415:AAGlxxfeyX1MoRAI4b0GKPYWEhZirw9JF-8"
+DB_NAME="jobhunter.sqlite"
