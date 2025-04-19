@@ -10,6 +10,7 @@ import json
 from config import EXCLUDE, DAYS
 from dotenv import load_dotenv # type: ignore
 import os
+from utils.webdriver_utils import get_chrome_options
 
 load_dotenv()
 
@@ -18,8 +19,7 @@ isLoggedIn = False
 
 def handler(keywords):
     notification_validated = False
-    options = Options()
-    # options.add_argument("--headless")  # si quieres headless
+    options = get_chrome_options()
     db = Database()
 
     # Iniciar WebDriver una sola vez
@@ -146,8 +146,7 @@ def load_cookies(driver, context, include_only=[]):
         print("Archivo de cookies no encontrado.")
 
 def bot_apply(url, job_id):
-    options = Options()
-    options.add_argument("--headless")  # Si quieres ocultarlo
+    options = get_chrome_options()
 
     db = Database()
     driver = webdriver.Chrome(options=options)
