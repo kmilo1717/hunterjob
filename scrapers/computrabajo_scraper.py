@@ -1,14 +1,14 @@
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
+from selenium import webdriver # type: ignore
+from selenium.webdriver.chrome.options import Options # type: ignore
+from selenium.webdriver.common.by import By # type: ignore
+from selenium.webdriver.support.ui import WebDriverWait # type: ignore
+from selenium.webdriver.support import expected_conditions as EC # type: ignore
+from selenium.common.exceptions import TimeoutException # type: ignore
 from database.database import Database
 import time
 import json
 from config import EXCLUDE, DAYS
-from dotenv import load_dotenv
+from dotenv import load_dotenv # type: ignore
 import os
 
 load_dotenv()

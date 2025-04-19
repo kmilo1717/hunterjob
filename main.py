@@ -1,9 +1,9 @@
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import (
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup # type: ignore
+from telegram.ext import ( # type: ignore
     Application, CommandHandler, MessageHandler, ConversationHandler, ContextTypes, filters, CallbackQueryHandler
 )
 from scrapers.computrabajo_scraper import handler as computrabajo_handler, bot_apply
-from dotenv import load_dotenv
+from dotenv import load_dotenv # type: ignore
 from config import INTEREST_JOBS
 from services.job_service import JobService
 import os
