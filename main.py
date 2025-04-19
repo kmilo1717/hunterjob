@@ -6,21 +6,21 @@ from scrapers.computrabajo_scraper import handler as computrabajo_handler, bot_a
 from dotenv import load_dotenv # type: ignore
 from config import INTEREST_JOBS
 from services.job_service import JobService
+from utils.utils import setup_logger
 import os
 
 load_dotenv()
 
-# Estados de la conversación
+logger = setup_logger(__name__)
+
 CHOOSING_SCRAPER, CHOOSING_DATA_OR_APPLY, SHOWING_VACANCY, USER_DECISION = range(4)
 
-# Token de Telegram
 BOT_TOKEN = os.getenv('BOT_TOKEN')
 
-# Variables temporales
 vacantes = []
 current_index = 0
 
-# Inicia el flujo
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
         [
@@ -187,4 +187,7 @@ def main():
     app.run_polling()
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        logger.error(f"Error: {e}")

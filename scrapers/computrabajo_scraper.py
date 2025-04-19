@@ -10,10 +10,13 @@ from config import EXCLUDE, DAYS, BROWSER
 from dotenv import load_dotenv # type: ignore
 import os
 from utils.webdriver_utils import get_chrome_options, get_firefox_options
+from utils.utils import setup_logger
 
 load_dotenv()
 
 isLoggedIn = False
+
+logger = setup_logger(__name__)
 
 
 def handler(keywords):
@@ -124,7 +127,7 @@ def handler(keywords):
                 pagination += 1
 
     except Exception as e:
-        print(f"🔥 Error general en búsqueda: {e}")
+        logger.error(f"Error en el scraping: {e}")
 
     finally:
         driver.quit()  # Cerrar el driver una vez que todo termine
@@ -146,7 +149,7 @@ def load_cookies(driver, context, include_only=[]):
             driver.add_cookie(cookie)
         print("Cookies cargadas.")
     except FileNotFoundError:
-        print("Archivo de cookies no encontrado.")
+        logger.error("No se encontraron cookies.")
 
 def bot_apply(url, job_id):
     if BROWSER.upper() == 'FIREFOX':
