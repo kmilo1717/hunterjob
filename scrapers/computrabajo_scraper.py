@@ -81,6 +81,12 @@ def handler(keywords):
                             company = "Anonimo"
                         job_id = offer.get_attribute("data-id")
                         salary = contract_type = schedule = modality = "No especificado"
+                        try:
+                            location_elements = offer.find_elements(By.CSS_SELECTOR, "p.fs16.fc_base.mt5 span.mr10")
+                            location = location_elements[1].text if len(location_elements) > 1 else "Sin ubicacion"
+                        except:
+                            location = "Sin ubicacion"
+                    
                         
                         offer.click()
                         time.sleep(3)
@@ -111,9 +117,9 @@ def handler(keywords):
                         # Guardar en la base de datos
                         db.execute_query("""
                             INSERT OR IGNORE INTO jobs 
-                            (title, url, company, job_id, salary, contract_type, schedule, modality, description, status, created_at) 
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', datetime('now', 'localtime'))
-                        """, (title, link, company, job_id, salary, contract_type, schedule, modality, description))
+                            (title, url, company, job_id, salary, contract_type, schedule, modality, description,location, status, created_at) 
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', datetime('now', 'localtime'))
+                        """, (title, link, company, job_id, salary, contract_type, schedule, modality, description, location))
 
                         print(f"{title} 👉 {link}")
 

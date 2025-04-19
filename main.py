@@ -88,6 +88,7 @@ async def show_next_vacancy(update: Update, context: ContextTypes.DEFAULT_TYPE, 
     response = (
         f"📢 Vacante disponible:\n\n"
         f"📌 *{vacante['title']}*\n"
+        f"📍 *{vacante['location']}*\n"
         f"💵 {vacante['salary']}\n"
         f"📃 {vacante['contract_type']}\n"
         f"🕐 {vacante['schedule']}\n"
