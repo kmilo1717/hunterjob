@@ -1,0 +1,39 @@
+{
+    "computrabajo": [
+        {
+            "name": "cookieconsent_status",
+            "value": "allow",
+            "domain": ".co.computrabajo.com",
+            "path": "/",
+            "expires": 1792543871,
+            "prority": "Medium"
+        },
+        {
+            "name": "ct_consent",
+            "value": "true",
+            "domain": ".co.computrabajo.com",
+            "path": "/",
+            "expires": 1792543871,
+            "prority": "Medium"
+        },
+        {
+            "name": "SLO_GWPT_Show_Hide_tmp",
+            "value": "true",
+            "domain": ".co.computrabajo.com",
+            "path": "/",
+            "expires": 1792543871,
+            "prority": "Medium"
+        },
+        {
+            "name": "uca",
+            "value": "",
+            "domain": ".co.computrabajo.com",
+            "path": "/",
+            "expires": 1750252372,
+            "prority": "Medium",
+            "secure": true,
+            "httpOnly": true,
+            "samesite": "none"
+        }
+    ]
+}

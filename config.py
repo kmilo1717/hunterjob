@@ -1,2 +1,3 @@
-BOT_TOKEN="7947549415:AAGlxxfeyX1MoRAI4b0GKPYWEhZirw9JF-8"
-DB_NAME="jobhunter.sqlite"
+EXCLUDE= ['BairesDev LLC']
+INTEREST_JOBS = ['php','laravel','fronted','backend']
+DAYS = '7'
