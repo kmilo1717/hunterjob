@@ -1,12 +1,12 @@
-from selenium.webdriver.chrome.options import Options # type: ignore
-from selenium.webdriver.firefox.options import Options # type: ignore
+from selenium.webdriver.chrome.options import Options as ChromeOptions # type: ignore
+from selenium.webdriver.firefox.options import Options as FirefoxOptions # type: ignore
 from dotenv import load_dotenv # type: ignore
 import os
 
 def get_chrome_options():
     load_dotenv()
 
-    options = Options()
+    options = ChromeOptions()
     options.add_argument("start-maximized")
     options.add_argument("window-size=1400x900")
     if os.getenv('APP_ENV') == 'production':
@@ -19,7 +19,7 @@ def get_chrome_options():
 def get_firefox_options():
     load_dotenv()
 
-    options = Options()
+    options = FirefoxOptions()
     options.add_argument("start-maximized")
     options.add_argument("window-size=1400x900")
     if os.getenv('APP_ENV') == 'production':

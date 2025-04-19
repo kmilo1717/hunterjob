@@ -149,7 +149,7 @@ def load_cookies(driver, context, include_only=[]):
         print("Archivo de cookies no encontrado.")
 
 def bot_apply(url, job_id):
-    if BROWSER == 'firefox':
+    if BROWSER == 'Firefox':
         options = get_firefox_options()
         driver = webdriver.Firefox(options=options)
     else:
