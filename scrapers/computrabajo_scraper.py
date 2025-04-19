@@ -1,5 +1,4 @@
 from selenium import webdriver # type: ignore
-from selenium.webdriver.chrome.options import Options # type: ignore
 from selenium.webdriver.common.by import By # type: ignore
 from selenium.webdriver.support.ui import WebDriverWait # type: ignore
 from selenium.webdriver.support import expected_conditions as EC # type: ignore
@@ -7,10 +6,10 @@ from selenium.common.exceptions import TimeoutException # type: ignore
 from database.database import Database
 import time
 import json
-from config import EXCLUDE, DAYS
+from config import EXCLUDE, DAYS, BROWSER
 from dotenv import load_dotenv # type: ignore
 import os
-from utils.webdriver_utils import get_chrome_options
+from utils.webdriver_utils import get_chrome_options, get_firefox_options
 
 load_dotenv()
 
@@ -19,11 +18,15 @@ isLoggedIn = False
 
 def handler(keywords):
     notification_validated = False
-    options = get_chrome_options()
+    if BROWSER == 'Firefox':
+        options = get_firefox_options()
+        driver = webdriver.Firefox(options=options)
+    else:
+        options = get_chrome_options()
+        driver = webdriver.Chrome(options=options)
+
     db = Database()
 
-    # Iniciar WebDriver una sola vez
-    driver = webdriver.Chrome(options=options)
     driver.get("https://co.computrabajo.com/")
     load_cookies(driver, 'computrabajo', ['cookieconsent_status', 'ct_consent', 'SLO_GWPT_Show_Hide_tmp'])
     driver.set_window_size(1400, 900)
@@ -146,10 +149,14 @@ def load_cookies(driver, context, include_only=[]):
         print("Archivo de cookies no encontrado.")
 
 def bot_apply(url, job_id):
-    options = get_chrome_options()
+    if BROWSER == 'firefox':
+        options = get_firefox_options()
+        driver = webdriver.Firefox(options=options)
+    else:
+        options = get_chrome_options()
+        driver = webdriver.Chrome(options=options)
 
     db = Database()
-    driver = webdriver.Chrome(options=options)
     driver.get("https://co.computrabajo.com/")
 
     load_cookies(driver, 'computrabajo')
