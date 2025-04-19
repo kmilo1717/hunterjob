@@ -4,18 +4,13 @@ from telegram.ext import ( # type: ignore
 )
 from scrapers.computrabajo_scraper import handler as computrabajo_handler, bot_apply
 from dotenv import load_dotenv # type: ignore
-from config import INTEREST_JOBS
+from config import INTEREST_JOBS, BOT_TOKEN
 from services.job_service import JobService
 from utils.utils import setup_logger
-import os
-
-load_dotenv()
 
 logger = setup_logger(__name__)
 
 CHOOSING_SCRAPER, CHOOSING_DATA_OR_APPLY, SHOWING_VACANCY, USER_DECISION = range(4)
-
-BOT_TOKEN = os.getenv('BOT_TOKEN')
 
 vacantes = []
 current_index = 0

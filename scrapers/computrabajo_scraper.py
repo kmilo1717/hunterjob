@@ -6,13 +6,9 @@ from selenium.common.exceptions import TimeoutException # type: ignore
 from database.database import Database
 import time
 import json
-from config import EXCLUDE, DAYS, BROWSER
-from dotenv import load_dotenv # type: ignore
-import os
+from config import EXCLUDE, DAYS, BROWSER, COOKIE_UCA
 from utils.webdriver_utils import get_chrome_options, get_firefox_options
 from utils.utils import setup_logger
-
-load_dotenv()
 
 isLoggedIn = False
 
@@ -145,7 +141,7 @@ def load_cookies(driver, context, include_only=[]):
             if include_only and cookie['name'] not in include_only:
                 continue
             if cookie['name'] == 'uca':
-                cookie['value'] = os.getenv('COOKIE_UCA')
+                cookie['value'] = COOKIE_UCA
             driver.add_cookie(cookie)
         print("Cookies cargadas.")
     except FileNotFoundError:

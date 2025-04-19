@@ -1,10 +1,5 @@
 import sqlite3
-from dotenv import load_dotenv # type: ignore
-import os
-
-load_dotenv()
-
-DB_NAME = os.getenv('DB_NAME')
+from config import DB_NAME
 
 class Database:
     _instance = None
