@@ -128,15 +128,17 @@ def handler(keywords):
                         """, (title, link, company, job_id, salary_int, salary, contract_type, schedule, modality, description, location))
                         print(f"✅ Oferta guardada: {title}")
                     except Exception as e:
-                        print(f"❌ Error procesando oferta: {e}")
+                        print("❌ Error procesando oferta: Revisa los detalles en los loggers.")
+                        logger.error(f"Error procesando oferta: {e}")
 
                 pagination += 1
 
     except Exception as e:
+        print("Error en el scraping: Revisa los detalles en los loggers.")
         logger.error(f"Error en el scraping: {e}")
 
     finally:
-        driver.quit()  # Cerrar el driver una vez que todo termine
+        driver.quit()
 
     print("✅ Scraping finalizado.")
 
@@ -155,6 +157,7 @@ def load_cookies(driver, context, include_only=[]):
             driver.add_cookie(cookie)
         print("Cookies cargadas.")
     except FileNotFoundError:
+        print("No se encontraron cookies.")
         logger.error("No se encontraron cookies.")
 
 def bot_apply(url, job_id):

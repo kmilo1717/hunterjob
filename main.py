@@ -69,13 +69,6 @@ async def choose_data_or_apply(update: Update, context: ContextTypes.DEFAULT_TYP
     elif query.data == PATTERN_RETURN_MENU:
         return await start(update, context)
 
-
-def escape_telegram_markdown_v2(text):
-    # Caracteres reservados que necesitan ser escapados
-    escape_chars = r'[_*[\]()~`>#+\-=|{}.!]'
-    # Reemplazamos cada uno de los caracteres reservados por su versión escapada
-    return re.sub(f'([{escape_chars}])', r'\\\1', text)
-
 # Muestra vacante
 async def show_next_vacancy(update: Update, context: ContextTypes.DEFAULT_TYPE, query=None):
     vacantes = context.user_data.get('vacantes', [])
@@ -179,4 +172,5 @@ if __name__ == "__main__":
     try:
         main()
     except Exception as e:
-        logger.error(f"Error: {e}")
+        print("Error en main: Revisar logs para más detalles.")
+        logger.error(f"Error en main: {e}")
