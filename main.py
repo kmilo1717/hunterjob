@@ -102,6 +102,8 @@ async def show_next_vacancy(update: Update, context: ContextTypes.DEFAULT_TYPE, 
             response += f"📝 {vacante['description']}\n\n"
         if 'title' in vacante and vacante['title']:
             response += f"📌 <b>{vacante['title']}</b>\n"
+        if 'modality' in vacante and vacante['modality']:
+            response += f"⚠️ <b>{vacante['modality']}</b>\n"
         if 'location' in vacante and vacante['location']:
             response += f"📍 <b>{vacante['location']}</b>\n"
         if 'salary' in vacante and vacante['salary']:
@@ -110,8 +112,6 @@ async def show_next_vacancy(update: Update, context: ContextTypes.DEFAULT_TYPE, 
             response += f"📃 {vacante['contract_type']}\n"
         if 'schedule' in vacante and vacante['schedule']:
             response += f"🕐 {vacante['schedule']}\n"
-        if 'modality' in vacante and vacante['modality']:
-            response += f"🌐 {vacante['modality']}\n"
 
         response = highlights(response)
 
