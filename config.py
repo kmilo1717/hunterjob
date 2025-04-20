@@ -5,9 +5,35 @@ load_dotenv()
 
 # Variables de configuración
 BROWSER = 'Chrome'  # Puede ser 'Chrome', 'Firefox'
-EXCLUDE = ['BairesDev LLC']
-INTEREST_JOBS = ['php', 'laravel', 'frontend', 'backend']
-DAYS = '1'
+INTEREST_JOBS = ['php', 'laravel', 'frontend', 'backend', 'front end', 'back end', 'desarrollador', 'programador', 'developer', 'software', 'sql']
+MIN_SALARY = 3000000
+EXCLUDE = [
+    'bairesdev llc',
+    'vendedor',
+    'rutas',
+    'salesforce',
+    'cnc',
+    'moto',
+    'profesor',
+    'almacenista',
+    'diseñador',
+    'docente',
+    'mesa de ayuda',
+    'ruta',
+    'electrisista',
+    'internet',
+    'marketing',
+    'supervisor',
+    'delphi',
+    'contador',
+    'despachos',
+    'electronico',
+    'asesor',
+    'coordinador',
+    'negocios',
+    'conductor'
+]
+HIGHLIGHTS = ['php', 'laravel', 'symfony', '.NET', 'java', 'hibrido', 'presencial', 'spring', 'remoto', 'virtual', 'sql', 'horario', 'contrato', 'contrato:','salario','salario:','años','año', 'angular', 'javascript']
 
 # Variables de entorno cargadas desde el archivo .env
 BOT_TOKEN = os.getenv('BOT_TOKEN')
