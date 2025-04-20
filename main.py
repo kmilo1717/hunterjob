@@ -118,16 +118,16 @@ async def show_next_vacancy(update: Update, context: ContextTypes.DEFAULT_TYPE, 
 
         try:
             if query:
-                await query.edit_message_text(response, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode="HTML")
+                await query.edit_message_text(response, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode="HTML", disable_web_page_preview=True)
             else:
-                await update.effective_message.reply_text(response, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode="HTML")
+                await update.effective_message.reply_text(response, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode="HTML", disable_web_page_preview=True)
         except Exception as e:
             logger.error(f"Error al mostrar formato HTML: {e}")
             safe_response = html.escape(response)
             if query:
-                await query.edit_message_text(safe_response, reply_markup=InlineKeyboardMarkup(keyboard))
+                await query.edit_message_text(safe_response, reply_markup=InlineKeyboardMarkup(keyboard), disable_web_page_preview=True)
             else:
-                await update.effective_message.reply_text(safe_response, reply_markup=InlineKeyboardMarkup(keyboard))
+                await update.effective_message.reply_text(safe_response, reply_markup=InlineKeyboardMarkup(keyboard), disable_web_page_preview=True)
 
         return USER_DECISION
 
