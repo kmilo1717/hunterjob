@@ -4,3 +4,4 @@ venv/
 *.pyc
 data/jobhunter.sqlite
 *.log
+config.py

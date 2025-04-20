@@ -8,7 +8,7 @@ import time
 import json
 from config import EXCLUDE, BROWSER, COOKIE_UCA
 from utils.webdriver_utils import get_chrome_options, get_firefox_options
-from utils.utils import setup_logger
+from utils.utils import setup_logger, salary_to_int
 
 isLoggedIn = False
 
@@ -68,7 +68,13 @@ def handler(keywords):
                     print("✅ Sin más ofertas en esta página.")
                     break
 
-                filtered_offers = [o for o in offers if not any(e in o.text for e in EXCLUDE) and ("Hace" in o.text or "Ayer" in o.text)]
+                exclude_lower = [e.lower() for e in EXCLUDE]
+
+                filtered_offers = [
+                    o for o in offers 
+                    if not any(e in o.text.lower() for e in exclude_lower)
+                    and ("hace" in o.text.lower() or "ayer" in o.text.lower())
+                ]
 
                 for offer in filtered_offers:
                     try:
@@ -114,12 +120,12 @@ def handler(keywords):
                             print(f"⚠️ Error obteniendo detalles: {e}")
                             description = "Descripción no disponible"
 
-                        # Guardar en la base de datos
+                        salary_int = salary_to_int(salary)
                         db.execute_query("""
                             INSERT OR IGNORE INTO jobs 
-                            (title, url, company, job_id, salary, contract_type, schedule, modality, description,location, status, created_at) 
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', datetime('now', 'localtime'))
-                        """, (title, link, company, job_id, salary, contract_type, schedule, modality, description, location))
+                            (title, url, company, job_id, salary_int, salary, contract_type, schedule, modality, description,location, status, created_at) 
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', datetime('now', 'localtime'))
+                        """, (title, link, company, job_id, salary_int, salary, contract_type, schedule, modality, description, location))
                         print(f"✅ Oferta guardada: {title}")
                     except Exception as e:
                         print(f"❌ Error procesando oferta: {e}")

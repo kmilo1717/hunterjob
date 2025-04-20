@@ -24,3 +24,17 @@ def setup_logger(name):
     logger.addHandler(file_handler)
 
     return logger
+
+import re
+
+def salary_to_int(text):
+    try:
+        text = text.lower()
+        if text == 'no especificado':
+            return 0
+        text = text.split(',')[0]
+        numbers_only = re.sub(r'[^0-9]', '', text)
+        return int(numbers_only) if numbers_only else 0
+    except Exception as e:
+        return 0
+
