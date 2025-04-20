@@ -101,7 +101,7 @@ async def show_next_vacancy(update: Update, context: ContextTypes.DEFAULT_TYPE, 
         if 'description' in vacante and vacante['description']:
             desc = vacante['description']
             if len(desc) > 1000:
-                desc = desc[:1000] + '...'
+                desc = desc[:3000] + '...'
             response += f"📝 {desc}\n\n"
         if 'title' in vacante and vacante['title']:
             response += f"📌 <b>{vacante['title']}</b>\n"
