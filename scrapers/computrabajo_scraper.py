@@ -183,20 +183,17 @@ def bot_apply(url, job_id):
 
     try:
 
-        apply_button = WebDriverWait(driver, 6).until(
+        apply_button = WebDriverWait(driver, 5).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, "a.b_primary.big.w100"))
         )
         apply_button.click()
-
-        time.sleep(3)
-
 
         success_locator = (By.XPATH, "//p[contains(text(), 'Te aplicaste correctamente')]")
         already_applied_locator = (By.XPATH, "//p[contains(text(), 'Ya aplicaste a esta oferta')]")
 
         try:
             # Esperar uno de los dos mensajes
-            message = WebDriverWait(driver, 4).until(
+            message = WebDriverWait(driver, 3).until(
                 EC.any_of(
                     EC.presence_of_element_located(success_locator),
                     EC.presence_of_element_located(already_applied_locator)
