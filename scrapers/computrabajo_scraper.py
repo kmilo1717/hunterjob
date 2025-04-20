@@ -6,7 +6,7 @@ from selenium.common.exceptions import TimeoutException # type: ignore
 from database.database import Database
 import time
 import json
-from config import EXCLUDE, DAYS, BROWSER, COOKIE_UCA
+from config import EXCLUDE, BROWSER, COOKIE_UCA
 from utils.webdriver_utils import get_chrome_options, get_firefox_options
 from utils.utils import setup_logger
 
@@ -37,7 +37,7 @@ def handler(keywords):
 
             pagination = 1
             while True:
-                driver.get(f"https://co.computrabajo.com/trabajo-de-{keyword}?pubdate={DAYS}&p={pagination}")
+                driver.get(f"https://co.computrabajo.com/trabajo-de-{keyword}?p={pagination}")
                 time.sleep(3)
                 
                 if not notification_validated:
@@ -68,7 +68,7 @@ def handler(keywords):
                     print("✅ Sin más ofertas en esta página.")
                     break
 
-                filtered_offers = [o for o in offers if not any(e in o.text for e in EXCLUDE)]
+                filtered_offers = [o for o in offers if not any(e in o.text for e in EXCLUDE) and ("Hace" in o.text or "Ayer" in o.text)]
 
                 for offer in filtered_offers:
                     try:
@@ -120,9 +120,7 @@ def handler(keywords):
                             (title, url, company, job_id, salary, contract_type, schedule, modality, description,location, status, created_at) 
                             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', datetime('now', 'localtime'))
                         """, (title, link, company, job_id, salary, contract_type, schedule, modality, description, location))
-
-                        print(f"{title} 👉 {link}")
-
+                        print(f"✅ Oferta guardada: {title}")
                     except Exception as e:
                         print(f"❌ Error procesando oferta: {e}")
 
