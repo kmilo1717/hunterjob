@@ -7,6 +7,7 @@ from scrapers.computrabajo_scraper import handler as computrabajo_handler, bot_a
 from config import INTEREST_JOBS, BOT_TOKEN
 from services.job_service import JobService
 from utils.utils import setup_logger
+import html
 
 logger = setup_logger(__name__)
 
@@ -114,10 +115,18 @@ async def show_next_vacancy(update: Update, context: ContextTypes.DEFAULT_TYPE, 
             [InlineKeyboardButton("✋ Aplicar manualmente", callback_data='apply_manual')]
         ]
 
-        if query:
-            await query.edit_message_text(response, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode="HTML")
-        else:
-            await update.effective_message.reply_text(response, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode="HTML")
+        try:
+            if query:
+                await query.edit_message_text(response, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode="HTML")
+            else:
+                await update.effective_message.reply_text(response, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode="HTML")
+        except Exception as e:
+            logger.error(f"Error al mostrar formato HTML: {e}")
+            safe_response = html.escape(response)
+            if query:
+                await query.edit_message_text(safe_response, reply_markup=InlineKeyboardMarkup(keyboard))
+            else:
+                await update.effective_message.reply_text(safe_response, reply_markup=InlineKeyboardMarkup(keyboard))
 
         return USER_DECISION
 
