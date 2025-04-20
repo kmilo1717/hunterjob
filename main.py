@@ -1,13 +1,12 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
-    Application, CommandHandler, MessageHandler, ConversationHandler, ContextTypes,
-    filters, CallbackQueryHandler
+    Application, CommandHandler, ConversationHandler, ContextTypes,
+    CallbackQueryHandler
 )
 from scrapers.computrabajo_scraper import handler as computrabajo_handler, bot_apply
 from config import INTEREST_JOBS, BOT_TOKEN
 from services.job_service import JobService
 from utils.utils import setup_logger
-import re
 
 logger = setup_logger(__name__)
 
@@ -166,6 +165,7 @@ def main():
 
     app.add_handler(conv_handler)
     print("✅ Bot corriendo...")
+    logger.info("Bot corriendo con exito.")
     app.run_polling()
 
 if __name__ == "__main__":

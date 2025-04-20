@@ -32,18 +32,21 @@ def handler(keywords):
 
     
     try:
+        existing_jobs = db.execute_query("SELECT job_id FROM jobs").fetchall()
+        existing_job_ids = set(job[0] for job in existing_jobs)
+        exclude_lower = [e.lower() for e in EXCLUDE]
+
         for keyword in keywords:
             print(f"\n🔍 Buscando ofertas para: {keyword}\n")
 
             pagination = 1
             while True:
                 driver.get(f"https://co.computrabajo.com/trabajo-de-{keyword}?p={pagination}")
-                time.sleep(3)
-                
+
                 if not notification_validated:
                     try:
                         # Espera a que aparezca el popup
-                        WebDriverWait(driver, 5).until(
+                        WebDriverWait(driver, 10).until(
                             EC.presence_of_element_located((By.ID, "pop-up-webpush-sub"))
                         )
                         # Cierra popup dando clic en "Ahora no"
@@ -57,9 +60,10 @@ def handler(keywords):
                         notification_validated = True
 
                 try:
-                    offers = WebDriverWait(driver, 8).until(
+                    offers_elements = WebDriverWait(driver, 8).until(
                         EC.presence_of_all_elements_located((By.CLASS_NAME, "box_offer"))
                     )
+                    offers = [o for o in offers_elements if o.get_attribute("data-id") not in existing_job_ids]
                 except TimeoutException:
                     print("⏰ No se pudieron cargar las ofertas, saliendo de esta búsqueda...")
                     break
@@ -68,7 +72,6 @@ def handler(keywords):
                     print("✅ Sin más ofertas en esta página.")
                     break
 
-                exclude_lower = [e.lower() for e in EXCLUDE]
 
                 filtered_offers = [
                     o for o in offers 
@@ -95,9 +98,11 @@ def handler(keywords):
                     
                         
                         offer.click()
-                        time.sleep(3)
+                        time.sleep(1.5)
                         try:
-                            description = driver.find_element(By.CLASS_NAME, "t_word_wrap").text
+                            description = WebDriverWait(driver, 5).until(
+                                EC.presence_of_element_located((By.CLASS_NAME, "t_word_wrap"))
+                            ).text
                             details = driver.find_elements(By.CSS_SELECTOR, ".mbB p")
 
                             for detail in details:
@@ -175,11 +180,10 @@ def bot_apply(url, job_id):
 
     driver.get(url)
 
-    time.sleep(3)
 
     try:
 
-        apply_button = WebDriverWait(driver, 3).until(
+        apply_button = WebDriverWait(driver, 6).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, "a.b_primary.big.w100"))
         )
         apply_button.click()
