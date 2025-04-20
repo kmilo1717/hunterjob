@@ -10,6 +10,7 @@ MIN_SALARY = 0
 EXCLUDE = [
     'vendedor',
 ]
+HIGHLIGHTS = ['remoto']
 
 # Variables de entorno cargadas desde el archivo .env
 BOT_TOKEN = os.getenv('BOT_TOKEN')

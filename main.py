@@ -6,7 +6,7 @@ from telegram.ext import (
 from scrapers.computrabajo_scraper import handler as computrabajo_handler, bot_apply
 from config import INTEREST_JOBS, BOT_TOKEN
 from services.job_service import JobService
-from utils.utils import setup_logger
+from utils.utils import setup_logger, highlights
 import html
 
 logger = setup_logger(__name__)
@@ -97,17 +97,18 @@ async def show_next_vacancy(update: Update, context: ContextTypes.DEFAULT_TYPE, 
 
         response = (
             f"📢 Vacante disponible:\n\n"
+            f"🔗 {vacante['url'] if 'url' in vacante else 'Sin URL'}\n"
+            f"📝 {vacante['description'] if 'description' in vacante else 'Sin descripción'}\n\n"
             f"📌 <b>{vacante['title'] if 'title' in vacante else 'Sin título'}</b>\n"
             f"📍 <b>{vacante['location'] if 'location' in vacante else 'Sin ubicación'}</b>\n"
             f"💵 {vacante['salary'] if 'salary' in vacante else 'No especificado'}\n"
             f"📃 {vacante['contract_type'] if 'contract_type' in vacante else 'No especificado'}\n"
             f"🕐 {vacante['schedule'] if 'schedule' in vacante else 'No especificado'}\n"
             f"🌐 {vacante['modality'] if 'modality' in vacante else 'No especificado'}\n"
-            f"📝 {vacante['description'] if 'description' in vacante else 'Sin descripción'}\n\n"
-            f"🔗 {vacante['url'] if 'url' in vacante else 'Sin URL'}"
+
         )
 
-
+        response = highlights(response)
 
         keyboard = [
             [InlineKeyboardButton("✅ Aplicar (bot)", callback_data='apply_bot'),

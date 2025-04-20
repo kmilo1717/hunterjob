@@ -1,4 +1,5 @@
 # utils.py
+from config import HIGHLIGHTS
 import logging
 import os
 
@@ -38,3 +39,12 @@ def salary_to_int(text):
     except Exception as e:
         return 0
 
+def highlights(texto):
+    for palabra in HIGHLIGHTS:
+        texto = re.sub(
+            fr'({re.escape(palabra)})',
+            r'<b>\1</b>',
+            texto,
+            flags=re.IGNORECASE
+        )
+    return texto
