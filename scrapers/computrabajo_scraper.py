@@ -87,15 +87,16 @@ def handler(keywords):
                         try:
                             company = offer.find_element(By.CLASS_NAME, "t_ellipsis").text
                         except:
-                            company = "Anonimo"
+                            company = None
+
                         job_id = offer.get_attribute("data-id")
-                        salary = contract_type = schedule = modality = "No especificado"
+                        salary = contract_type = schedule = modality = location = None
+                        
                         try:
                             location_elements = offer.find_elements(By.CSS_SELECTOR, "p.fs16.fc_base.mt5 span.mr10")
-                            location = location_elements[1].text if len(location_elements) > 1 else "Sin ubicacion"
+                            location = location_elements[1].text if len(location_elements) > 1 else None
                         except:
-                            location = "Sin ubicacion"
-                    
+                            location = None
                         
                         offer.click()
                         time.sleep(1.5)
@@ -111,26 +112,28 @@ def handler(keywords):
                                     continue
                                 
                                 icon = icons[0].get_attribute("class")
-
+                                
                                 if "i_money" in icon:
-                                    salary = detail.text.strip()
+                                    salary = detail.text.strip() or None
                                 elif "i_find" in icon:
-                                    contract_type = detail.text.strip()
+                                    contract_type = detail.text.strip() or None
                                 elif "i_clock" in icon:
-                                    schedule = detail.text.strip()
+                                    schedule = detail.text.strip() or None
                                 elif "i_home" in icon:
-                                    modality = detail.text.strip()
+                                    modality = detail.text.strip() or None
 
                         except Exception as e:
                             print(f"⚠️ Error obteniendo detalles: {e}")
-                            description = "Descripción no disponible"
+                            description = None
 
-                        salary_int = salary_to_int(salary)
+                        salary_int = salary_to_int(salary) if salary else None
+                        
                         db.execute_query("""
                             INSERT OR IGNORE INTO jobs 
-                            (title, url, company, job_id, salary_int, salary, contract_type, schedule, modality, description,location, status, created_at) 
+                            (title, url, company, job_id, salary_int, salary, contract_type, schedule, modality, description, location, status, created_at) 
                             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', datetime('now', 'localtime'))
                         """, (title, link, company, job_id, salary_int, salary, contract_type, schedule, modality, description, location))
+                                       
                         print(f"✅ Oferta guardada: {title}")
                     except Exception as e:
                         print("❌ Error procesando oferta: Revisa los detalles en los loggers.")

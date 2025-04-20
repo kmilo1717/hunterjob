@@ -95,18 +95,22 @@ async def show_next_vacancy(update: Update, context: ContextTypes.DEFAULT_TYPE, 
 
         vacante = dict(vacantes[current_index])
 
-        response = (
-            f"📢 Vacante disponible:\n\n"
-            f"🔗 {vacante['url'] if 'url' in vacante else 'Sin URL'}\n"
-            f"📝 {vacante['description'] if 'description' in vacante else 'Sin descripción'}\n\n"
-            f"📌 <b>{vacante['title'] if 'title' in vacante else 'Sin título'}</b>\n"
-            f"📍 <b>{vacante['location'] if 'location' in vacante else 'Sin ubicación'}</b>\n"
-            f"💵 {vacante['salary'] if 'salary' in vacante else 'No especificado'}\n"
-            f"📃 {vacante['contract_type'] if 'contract_type' in vacante else 'No especificado'}\n"
-            f"🕐 {vacante['schedule'] if 'schedule' in vacante else 'No especificado'}\n"
-            f"🌐 {vacante['modality'] if 'modality' in vacante else 'No especificado'}\n"
-
-        )
+        if 'url' in vacante and vacante['url']:
+            response += f"🔗 {vacante['url']}\n"
+        if 'description' in vacante and vacante['description']:
+            response += f"📝 {vacante['description']}\n\n"
+        if 'title' in vacante and vacante['title']:
+            response += f"📌 <b>{vacante['title']}</b>\n"
+        if 'location' in vacante and vacante['location']:
+            response += f"📍 <b>{vacante['location']}</b>\n"
+        if 'salary' in vacante and vacante['salary']:
+            response += f"💵 {vacante['salary']}\n"
+        if 'contract_type' in vacante and vacante['contract_type']:
+            response += f"📃 {vacante['contract_type']}\n"
+        if 'schedule' in vacante and vacante['schedule']:
+            response += f"🕐 {vacante['schedule']}\n"
+        if 'modality' in vacante and vacante['modality']:
+            response += f"🌐 {vacante['modality']}\n"
 
         response = highlights(response)
 

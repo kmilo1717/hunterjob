@@ -31,7 +31,7 @@ import re
 def salary_to_int(text):
     try:
         text = text.lower()
-        if text == 'no especificado':
+        if not text:
             return 0
         text = text.split(',')[0]
         numbers_only = re.sub(r'[^0-9]', '', text)
