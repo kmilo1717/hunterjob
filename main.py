@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
     Application, CommandHandler, ConversationHandler, ContextTypes,
@@ -100,11 +101,13 @@ async def show_next_vacancy(update: Update, context: ContextTypes.DEFAULT_TYPE, 
             response += f"🔗 {vacante['url']}\n"
         if 'description' in vacante and vacante['description']:
             desc = vacante['description']
-            if len(desc) > 1000:
-                desc = desc[:3000] + '...'
+            if len(desc) > 3500:
+                desc = desc[:3500] + '...'
             response += f"📝 {desc}\n\n"
         if 'title' in vacante and vacante['title']:
             response += f"📌 <b>{vacante['title']}</b>\n"
+        if 'company' in vacante and vacante['company']:
+            response += f"🏢 <b>{vacante['company']}</b>\n"
         if 'modality' in vacante and vacante['modality']:
             response += f"⚠️ <b>{vacante['modality']}</b>\n"
         if 'location' in vacante and vacante['location']:
