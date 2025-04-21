@@ -126,7 +126,7 @@ def handler(keywords):
                             print(f"⚠️ Error obteniendo detalles: {e}")
                             description = None
 
-                        salary_int = salary_to_int(salary) if salary else None
+                        salary_int = salary_to_int(salary) if salary else 0
                         
                         db.execute_query("""
                             INSERT OR IGNORE INTO jobs 
