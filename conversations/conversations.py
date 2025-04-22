@@ -21,7 +21,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
          InlineKeyboardButton("🔗 LinkedIn", callback_data=PATTERN_LINKEDIN)]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_text("👋 Hola Camilo! ¿Dónde quieres buscar vacantes?", reply_markup=reply_markup)
+    await update.message.reply_text("👋 Hola! ¿Dónde quieres buscar vacantes?", reply_markup=reply_markup)
     return CHOOSING_SCRAPER
 
 # Elige scraper
@@ -55,8 +55,7 @@ async def choose_data_or_apply(update: Update, context: ContextTypes.DEFAULT_TYP
 
         if query.data == PATTERN_UPDATE_DB:
             await query.edit_message_text("Cargando vacantes...")
-            computrabajo_scraper = ComputrabajoScraper()
-            computrabajo_scraper.scrape(INTEREST_JOBS)
+            ComputrabajoScraper().scrape(INTEREST_JOBS)
             await query.message.reply_text("✅ Vacantes cargadas.")
             return await choose_scraper(update, context)
 

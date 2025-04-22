@@ -1,7 +1,6 @@
 from database.database import Database
 def create_table_jobs():
-    db = Database()
-    db.execute_query("""
+    Database().execute_query("""
         CREATE TABLE IF NOT EXISTS "jobs" (
             "id"	INTEGER,
             "title"	TEXT,

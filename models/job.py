@@ -15,5 +15,4 @@ class Job:
         self.salary_int = salary_int
     
     def save(self):
-        db = Database()
-        db.insert_one("jobs", self.__dict__)
+        Database().insert_one("jobs", self.__dict__)

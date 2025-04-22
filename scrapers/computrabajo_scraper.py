@@ -29,14 +29,13 @@ class ComputrabajoScraper(IScraper):
 
         driver.get(self.url)
 
-        db = Database()
         compputrabajo_service = ComputrabajoService()
         compputrabajo_service.load_cookies(driver, ['cookieconsent_status', 'ct_consent', 'SLO_GWPT_Show_Hide_tmp'])
         
         driver.set_window_size(1400, 900)
         
         try:
-            existing_jobs = db.execute_query("SELECT job_id FROM jobs").fetchall()
+            existing_jobs = self.db.execute_query("SELECT job_id FROM jobs").fetchall()
             existing_job_ids = set(job[0] for job in existing_jobs)
             exclude_lower = [e.lower() for e in EXCLUDE]
 

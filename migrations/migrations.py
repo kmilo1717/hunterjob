@@ -12,8 +12,7 @@ def migrations_handler():
 
 def create_migrations_table():
     """Crea la tabla de migraciones si no existe."""
-    db = Database()
-    db.execute_query("""
+    Database().execute_query("""
     CREATE TABLE IF NOT EXISTS migrations (
         id INTEGER PRIMARY KEY,
         migration_name TEXT NOT NULL,
