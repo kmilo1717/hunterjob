@@ -2,6 +2,7 @@ venv/
 .env
 **/__pycache__/*
 *.pyc
-data/jobhunter.sqlite
-*.log
+*.sqlite
+*.db
+logs/
 config.py

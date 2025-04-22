@@ -23,7 +23,18 @@ class Database:
         cursor.execute(query, params or ())
         self.get_connection().commit()
         return cursor
-
+    def insert_one(self, table, params=None): 
+        if not params:
+            raise ValueError("No se proporcionaron parámetros para insertar.")
+        columns = ', '.join(params.keys())
+        placeholders = ', '.join('?' for _ in params)
+        values = tuple(params.values())
+        
+        query = f"INSERT INTO {table} ({columns}) VALUES ({placeholders})"
+        cursor = self.get_connection().cursor()
+        cursor.execute(query, values)
+        self.get_connection().commit()
+        return cursor
     def fetch_all(self, query, params=None):
         cursor = self.get_connection().cursor()
         cursor.execute(query, params or ())

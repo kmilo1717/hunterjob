@@ -37,6 +37,9 @@ EXCLUDE = [
 ]
 HIGHLIGHTS = ['php', 'laravel', 'symfony', '.NET', 'java', 'hibrido', 'presencial', 'spring', 'remoto', 'virtual', 'sql', 'horario', 'contrato', 'contrato:','salario','salario:','años','año', 'angular', 'javascript']
 
+# Variables de configuración
+COMPUTRABAJO_URL = 'https://co.computrabajo.com/'
+
 # Variables de entorno cargadas desde el archivo .env
 BOT_TOKEN = os.getenv('BOT_TOKEN')
 DB_NAME = os.getenv('DB_NAME')

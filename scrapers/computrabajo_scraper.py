@@ -3,219 +3,149 @@ from selenium.webdriver.common.by import By # type: ignore
 from selenium.webdriver.support.ui import WebDriverWait # type: ignore
 from selenium.webdriver.support import expected_conditions as EC # type: ignore
 from selenium.common.exceptions import TimeoutException # type: ignore
+from core.interfaces import IScraper
 from database.database import Database
 import time
-import json
-from config import EXCLUDE, BROWSER, COOKIE_UCA
+from config import EXCLUDE, BROWSER, COMPUTRABAJO_URL
 from utils.webdriver_utils import get_chrome_options, get_firefox_options
 from utils.utils import setup_logger, salary_to_int
+from services.computrabajo_service import ComputrabajoService
 
-isLoggedIn = False
+class ComputrabajoScraper(IScraper):
+    def __init__(self):
+        self.db = Database()
+        self.logger = setup_logger(__name__)
+        self.url = COMPUTRABAJO_URL
+        
 
-logger = setup_logger(__name__)
+    def scrape(self, keywords):
+        notification_validated = False
+        if BROWSER.upper() == 'FIREFOX':
+            options = get_firefox_options()
+            driver = webdriver.Firefox(options=options)
+        else:
+            options = get_chrome_options()
+            driver = webdriver.Chrome(options=options)
 
+        driver.get(self.url)
 
-def handler(keywords):
-    notification_validated = False
-    if BROWSER.upper() == 'FIREFOX':
-        options = get_firefox_options()
-        driver = webdriver.Firefox(options=options)
-    else:
-        options = get_chrome_options()
-        driver = webdriver.Chrome(options=options)
-
-    db = Database()
-
-    driver.get("https://co.computrabajo.com/")
-    load_cookies(driver, 'computrabajo', ['cookieconsent_status', 'ct_consent', 'SLO_GWPT_Show_Hide_tmp'])
-    driver.set_window_size(1400, 900)
-
-    
-    try:
-        existing_jobs = db.execute_query("SELECT job_id FROM jobs").fetchall()
-        existing_job_ids = set(job[0] for job in existing_jobs)
-        exclude_lower = [e.lower() for e in EXCLUDE]
-
-        for keyword in keywords:
-            print(f"\n🔍 Buscando ofertas para: {keyword}\n")
-
-            pagination = 1
-            while True:
-                driver.get(f"https://co.computrabajo.com/trabajo-de-{keyword}?p={pagination}")
-
-                if not notification_validated:
-                    try:
-                        # Espera a que aparezca el popup
-                        WebDriverWait(driver, 10).until(
-                            EC.presence_of_element_located((By.ID, "pop-up-webpush-sub"))
-                        )
-                        # Cierra popup dando clic en "Ahora no"
-                        close_button = driver.find_element(By.XPATH, "//button[contains(text(),'Ahora no')]")
-                        close_button.click()
-                        print("✅ Popup cerrado.")
-                        notification_validated = True
-                        
-                    except:
-                        print("✅ No apareció el popup.")
-                        notification_validated = True
-
-                try:
-                    offers_elements = WebDriverWait(driver, 8).until(
-                        EC.presence_of_all_elements_located((By.CLASS_NAME, "box_offer"))
-                    )
-                    offers = [o for o in offers_elements if o.get_attribute("data-id") not in existing_job_ids]
-                except TimeoutException:
-                    print("⏰ No se pudieron cargar las ofertas, saliendo de esta búsqueda...")
-                    break
-
-                if not offers:
-                    print("✅ Sin más ofertas en esta página.")
-                    break
-
-
-                filtered_offers = [
-                    o for o in offers 
-                    if not any(e in o.text.lower() for e in exclude_lower)
-                    and ("hace" in o.text.lower() or "ayer" in o.text.lower())
-                ]
-
-                for offer in filtered_offers:
-                    try:
-                        title_element = offer.find_element(By.CLASS_NAME, "js-o-link")
-                        title = title_element.text
-                        link = title_element.get_attribute("href").strip()
-                        try:
-                            company = offer.find_element(By.CLASS_NAME, "t_ellipsis").text
-                        except:
-                            company = None
-
-                        job_id = offer.get_attribute("data-id")
-                        salary = contract_type = schedule = modality = location = None
-                        
-                        try:
-                            location_elements = offer.find_elements(By.CSS_SELECTOR, "p.fs16.fc_base.mt5 span.mr10")
-                            location = location_elements[1].text if len(location_elements) > 1 else None
-                        except:
-                            location = None
-                        
-                        offer.click()
-                        time.sleep(1.5)
-                        try:
-                            description = WebDriverWait(driver, 5).until(
-                                EC.presence_of_element_located((By.CLASS_NAME, "t_word_wrap"))
-                            ).text
-                            details = driver.find_elements(By.CSS_SELECTOR, ".mbB p")
-
-                            for detail in details:
-                                icons = detail.find_elements(By.TAG_NAME, "span")
-                                if not icons:
-                                    continue
-                                
-                                icon = icons[0].get_attribute("class")
-                                
-                                if "i_money" in icon:
-                                    salary = detail.text.strip() or None
-                                elif "i_find" in icon:
-                                    contract_type = detail.text.strip() or None
-                                elif "i_clock" in icon:
-                                    schedule = detail.text.strip() or None
-                                elif "i_home" in icon:
-                                    modality = detail.text.strip() or None
-
-                        except Exception as e:
-                            print(f"⚠️ Error obteniendo detalles: {e}")
-                            description = None
-
-                        salary_int = salary_to_int(salary) if salary else 0
-                        
-                        db.execute_query("""
-                            INSERT OR IGNORE INTO jobs 
-                            (title, url, company, job_id, salary_int, salary, contract_type, schedule, modality, description, location, status, created_at) 
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', datetime('now', 'localtime'))
-                        """, (title, link, company, job_id, salary_int, salary, contract_type, schedule, modality, description, location))
-                                       
-                        print(f"✅ Oferta guardada: {title}")
-                    except Exception as e:
-                        print("❌ Error procesando oferta: Revisa los detalles en los loggers.")
-                        logger.error(f"Error procesando oferta: {e}")
-
-                pagination += 1
-
-    except Exception as e:
-        print("Error en el scraping: Revisa los detalles en los loggers.")
-        logger.error(f"Error en el scraping: {e}")
-
-    finally:
-        driver.quit()
-
-    print("✅ Scraping finalizado.")
-
-
-
-def load_cookies(driver, context, include_only=[]):
-    try:
-        file_path="cookies.json"
-        with open(file_path, "r") as file:
-            cookies = json.load(file)
-        for cookie in cookies[context]:
-            if include_only and cookie['name'] not in include_only:
-                continue
-            if cookie['name'] == 'uca':
-                cookie['value'] = COOKIE_UCA
-            driver.add_cookie(cookie)
-        print("Cookies cargadas.")
-    except FileNotFoundError:
-        print("No se encontraron cookies.")
-        logger.error("No se encontraron cookies.")
-
-def bot_apply(url, job_id):
-    if BROWSER.upper() == 'FIREFOX':
-        options = get_firefox_options()
-        driver = webdriver.Firefox(options=options)
-    else:
-        options = get_chrome_options()
-        driver = webdriver.Chrome(options=options)
-
-    db = Database()
-    driver.get("https://co.computrabajo.com/")
-
-    load_cookies(driver, 'computrabajo')
-
-    driver.get(url)
-
-
-    try:
-
-        apply_button = WebDriverWait(driver, 5).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, "a.b_primary.big.w100"))
-        )
-        apply_button.click()
-
-        success_locator = (By.XPATH, "//p[contains(text(), 'Te aplicaste correctamente')]")
-        already_applied_locator = (By.XPATH, "//p[contains(text(), 'Ya aplicaste a esta oferta')]")
-
+        db = Database()
+        compputrabajo_service = ComputrabajoService()
+        compputrabajo_service.load_cookies(driver, ['cookieconsent_status', 'ct_consent', 'SLO_GWPT_Show_Hide_tmp'])
+        
+        driver.set_window_size(1400, 900)
+        
         try:
-            # Esperar uno de los dos mensajes
-            message = WebDriverWait(driver, 3).until(
-                EC.any_of(
-                    EC.presence_of_element_located(success_locator),
-                    EC.presence_of_element_located(already_applied_locator)
-                )
-            )
-            if message.is_displayed():
-                db.execute_query("UPDATE jobs SET status = 'applied' WHERE job_id = ?", (job_id,))
-                return ["✅ Aplicado", 1]
-            else:
-                db.execute_query("UPDATE jobs SET status = 'failed' WHERE job_id = ?", (job_id,))
-                return ["⚠️ No se pudo confirmar la aplicación. Revísalo manualmente.", 0]
+            existing_jobs = db.execute_query("SELECT job_id FROM jobs").fetchall()
+            existing_job_ids = set(job[0] for job in existing_jobs)
+            exclude_lower = [e.lower() for e in EXCLUDE]
 
-        except TimeoutException:
-            db.execute_query("UPDATE jobs SET status = 'failed' WHERE job_id = ?", (job_id,))
-            return ["⚠️ No se pudo confirmar la aplicación. Revísalo manualmente.", 0]
+            for keyword in keywords:
+                print(f"\n🔍 Buscando ofertas para: {keyword}\n")
 
-    except TimeoutException:
-        db.execute_query("UPDATE jobs SET status = 'failed' WHERE job_id = ?", (job_id,))
-        return ["⚠️ No se pudo encontrar el botón de aplicación.", 0]
+                pagination = 1
+                while True:
+                    driver.get(f"{self.url}trabajo-de-{keyword}?p={pagination}")
 
-    finally:
-        driver.quit()
+                    if not notification_validated:
+                        try:
+                            # Espera a que aparezca el popup
+                            WebDriverWait(driver, 10).until(
+                                EC.presence_of_element_located((By.ID, "pop-up-webpush-sub"))
+                            )
+                            # Cierra popup dando clic en "Ahora no"
+                            close_button = driver.find_element(By.XPATH, "//button[contains(text(),'Ahora no')]")
+                            close_button.click()
+                            print("✅ Popup cerrado.")
+                            notification_validated = True
+                            
+                        except:
+                            print("✅ No apareció el popup.")
+                            notification_validated = True
+
+                    try:
+                        offers_elements = WebDriverWait(driver, 8).until(
+                            EC.presence_of_all_elements_located((By.CLASS_NAME, "box_offer"))
+                        )
+                        offers = [o for o in offers_elements if o.get_attribute("data-id") not in existing_job_ids]
+                    except TimeoutException:
+                        print("⏰ No se pudieron cargar las ofertas, saliendo de esta búsqueda...")
+                        break
+
+                    if not offers:
+                        print("✅ Sin más ofertas en esta página.")
+                        break
+
+
+                    filtered_offers = [
+                        o for o in offers 
+                        if not any(e in o.text.lower() for e in exclude_lower)
+                        and ("hace" in o.text.lower() or "ayer" in o.text.lower())
+                    ]
+
+                    for offer in filtered_offers:
+                        try:
+                            title_element = offer.find_element(By.CLASS_NAME, "js-o-link")
+                            title = title_element.text
+                            link = title_element.get_attribute("href").strip()
+                            try:
+                                company = offer.find_element(By.CLASS_NAME, "t_ellipsis").text
+                            except:
+                                company = None
+
+                            job_id = offer.get_attribute("data-id")
+                            salary = contract_type = schedule = modality = location = None
+                            
+                            try:
+                                location_elements = offer.find_elements(By.CSS_SELECTOR, "p.fs16.fc_base.mt5 span.mr10")
+                                location = location_elements[1].text if len(location_elements) > 1 else None
+                            except:
+                                location = None
+                            
+                            offer.click()
+                            time.sleep(1.5)
+                            try:
+                                description = WebDriverWait(driver, 5).until(
+                                    EC.presence_of_element_located((By.CLASS_NAME, "t_word_wrap"))
+                                ).text
+                                details = driver.find_elements(By.CSS_SELECTOR, ".mbB p")
+
+                                for detail in details:
+                                    icons = detail.find_elements(By.TAG_NAME, "span")
+                                    if not icons:
+                                        continue
+                                    
+                                    icon = icons[0].get_attribute("class")
+                                    
+                                    if "i_money" in icon:
+                                        salary = detail.text.strip() or None
+                                    elif "i_find" in icon:
+                                        contract_type = detail.text.strip() or None
+                                    elif "i_clock" in icon:
+                                        schedule = detail.text.strip() or None
+                                    elif "i_home" in icon:
+                                        modality = detail.text.strip() or None
+
+                            except Exception as e:
+                                print(f"⚠️ Error obteniendo detalles: {e}")
+                                description = None
+
+                            salary_int = salary_to_int(salary) if salary else 0
+                        
+                            compputrabajo_service.create_job(title, link, company, job_id, salary, contract_type, schedule, modality, description, location, status = 'pending', salary_int = salary_int)
+                                        
+                            print(f"✅ Oferta guardada: {title}")
+                        except Exception as e:
+                            print("❌ Error procesando oferta: Revisa los detalles en los loggers.")
+                            self.logger.error(f"Error procesando oferta: {e}")
+
+                    pagination += 1
+
+        except Exception as e:
+            print("Error en el scraping: Revisa los detalles en los loggers.")
+            self.logger.error(f"Error en el scraping: {e}")
+
+        finally:
+            driver.quit()
+
+        print("✅ Scraping finalizado.")

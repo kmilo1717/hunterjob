@@ -1,0 +1,6 @@
+PATTERN_COMPUTRABAJO = "computrabajo"
+PATTERN_LINKEDIN = "linkedin"
+PATTERN_UPDATE_DB = "update_db"
+PATTERN_SHOW_VACANTES = "show_vacantes"
+PATTERN_USER_DECISION = "^(apply_bot|reject|apply_manual)$"
+PATTERN_RETURN_MENU = "return_menu"
