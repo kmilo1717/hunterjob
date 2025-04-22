@@ -1,5 +1,6 @@
 import sqlite3
 from config import DB_NAME
+import os
 
 class Database:
     _instance = None
@@ -7,6 +8,8 @@ class Database:
 
     def __new__(cls, db_name=DB_NAME):
         if not cls._instance:
+            if not os.path.exists('data'):
+                os.makedirs('data')
             cls._instance = super().__new__(cls)
             cls._connection = sqlite3.connect('data/' + db_name)
             cls._connection.row_factory = sqlite3.Row
