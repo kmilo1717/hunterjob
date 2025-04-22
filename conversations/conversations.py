@@ -153,8 +153,7 @@ async def user_decision(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         if decision == 'apply_bot':
             await query.edit_message_text("Aplicando...")
-            computrabajo_applicator = ComputrabajoApplicator(job_id)
-            response = computrabajo_applicator.apply()
+            response = ComputrabajoApplicator(job_id).apply(url)
             await query.message.reply_text(response[0])
             if response[1]:
                 context.user_data['current_index'] += 1

@@ -18,7 +18,7 @@ class ComputrabajoApplicator(IApplicator):
         self.url = COMPUTRABAJO_URL
         self.job_id = job_id
 
-    def apply(self):
+    def apply(self, apply_url):
         if BROWSER.upper() == 'FIREFOX':
             options = get_firefox_options()
             driver = webdriver.Firefox(options=options)
@@ -30,10 +30,10 @@ class ComputrabajoApplicator(IApplicator):
         driver.get(self.url)
 
         compputrabajo_service = ComputrabajoService()
-        compputrabajo_service.load_cookies(driver, ['cookieconsent_status', 'ct_consent', 'SLO_GWPT_Show_Hide_tmp'])
+        compputrabajo_service.load_cookies(driver)
         driver.set_window_size(1400, 900)
 
-        driver.get(self.url)
+        driver.get(apply_url)
 
 
         try:
