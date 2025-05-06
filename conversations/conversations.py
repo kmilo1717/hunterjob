@@ -139,7 +139,7 @@ async def show_next_vacancy(update: Update, context: ContextTypes.DEFAULT_TYPE, 
 
 # Decisión del usuario
 async def user_decision(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    try:
+
         query = update.callback_query
         await query.answer()
 
@@ -148,7 +148,7 @@ async def user_decision(update: Update, context: ContextTypes.DEFAULT_TYPE):
         vacantes = context.user_data.get('vacantes', [])
         current_index = context.user_data.get('current_index', 0)
         vacante = vacantes[current_index]
-        job_id = vacante['job_id']
+        job_id = vacante['id']
         url = vacante['url']
 
         if decision == 'apply_bot':
@@ -172,9 +172,6 @@ async def user_decision(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         return await show_next_vacancy(update, context)
 
-    except Exception as e:
-        print("Error en user_decision: Revisar logs para más detalles.")
-        logger.error(f"Error en user_decision: {e}")
 
 # Cancela
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):

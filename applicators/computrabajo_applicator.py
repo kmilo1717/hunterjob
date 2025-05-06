@@ -55,18 +55,18 @@ class ComputrabajoApplicator(IApplicator):
                     )
                 )
                 if message.is_displayed():
-                    db.execute_query("UPDATE jobs SET status = 'applied' WHERE job_id = ?", (self.job_id,))
+                    db.update_one("jobs", "UPDATE jobs SET status = 'applied' WHERE id = ?", {"id": self.job_id, "status": "applied"})
                     return ["✅ Aplicado", 1]
                 else:
-                    db.execute_query("UPDATE jobs SET status = 'failed' WHERE job_id = ?", (self.job_id,))
+                    db.update_one("jobs", "UPDATE jobs SET status = 'failed' WHERE id = ?", {"id": self.job_id, "status": "failed"})
                     return ["⚠️ No se pudo confirmar la aplicación. Revísalo manualmente.", 0]
 
             except TimeoutException:
-                db.execute_query("UPDATE jobs SET status = 'failed' WHERE job_id = ?", (self.job_id,))
+                db.update_one("jobs", "UPDATE jobs SET status = 'failed' WHERE id = ?", {"id": self.job_id, "status": "failed"})
                 return ["⚠️ No se pudo confirmar la aplicación. Revísalo manualmente.", 0]
 
         except TimeoutException:
-            db.execute_query("UPDATE jobs SET status = 'failed' WHERE job_id = ?", (self.job_id,))
+            db.update_one("jobs", "UPDATE jobs SET status = 'failed' WHERE id = ?", {"id": self.job_id, "status": "failed"})
             return ["⚠️ No se pudo encontrar el botón de aplicación.", 0]
 
         finally:

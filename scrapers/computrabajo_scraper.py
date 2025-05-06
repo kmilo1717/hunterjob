@@ -6,7 +6,7 @@ from selenium.common.exceptions import TimeoutException # type: ignore
 from core.interfaces import IScraper
 from database.database import Database
 import time
-from config import EXCLUDE, BROWSER, COMPUTRABAJO_URL
+from config import EXCLUDE, BROWSER, COMPUTRABAJO_URL, BACKEND_URL
 from utils.webdriver_utils import get_chrome_options, get_firefox_options
 from utils.utils import setup_logger, salary_to_int
 from services.computrabajo_service import ComputrabajoService
@@ -35,8 +35,10 @@ class ComputrabajoScraper(IScraper):
         driver.set_window_size(1400, 900)
         
         try:
-            existing_jobs = self.db.execute_query("SELECT job_id FROM jobs").fetchall()
-            existing_job_ids = set(job[0] for job in existing_jobs)
+            existing_jobs = self.db.fetch_all("jobs")
+
+            if BACKEND_URL: existing_job_ids = set([job['jobId'] for job in existing_jobs])
+            else: existing_job_ids = set([job['job_id']for job in existing_jobs])
             exclude_lower = [e.lower() for e in EXCLUDE]
 
             for keyword in keywords:

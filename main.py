@@ -1,14 +1,23 @@
-from config import BOT_TOKEN
+from config import BOT_TOKEN, BACKEND_URL
 from migrations.migrations import migrations_handler
 from utils.utils import setup_logger
 from telegram.ext import Application, CommandHandler, ConversationHandler, CallbackQueryHandler
 from patterns import PATTERN_COMPUTRABAJO, PATTERN_LINKEDIN, PATTERN_UPDATE_DB, PATTERN_SHOW_VACANTES, PATTERN_USER_DECISION, PATTERN_RETURN_MENU
 from conversations.conversations import CHOOSING_SCRAPER, CHOOSING_DATA_OR_APPLY, USER_DECISION, start, choose_scraper, choose_data_or_apply, user_decision, cancel
+import requests
 
 logger = setup_logger(__name__)
 # Main
 def main():
-    migrations_handler()
+    if BACKEND_URL:
+        try:
+            requests.get(BACKEND_URL)
+            print("✅ Backend corriendo...")
+        except Exception as e:
+            print("Error en main: Revisar logs para más detalles.")
+            logger.error(f"Error en main: {e}")
+    else:
+        migrations_handler()
     app = Application.builder().token(BOT_TOKEN).build()
 
     conv_handler = ConversationHandler(
