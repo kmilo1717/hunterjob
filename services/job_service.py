@@ -15,7 +15,7 @@ class JobService:
                 "status": "pending",
             }
             if salary > 0:
-                params["min_salary"] = salary
+                params["salary"] = salary
             if modalities:
                 params["modalities"] = ','.join(modalities)
 
