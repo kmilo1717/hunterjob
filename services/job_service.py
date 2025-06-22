@@ -5,19 +5,14 @@ import requests
 class JobService:
     def __init__(self):
         self.db = Database()
-    def get_vacancies(self):
-        salary = int(FILTERS.get('MIN_SALARY', 0))
-        modalities = FILTERS.get('MODALITY')
 
+    def get_vacancies(self):
         if BACKEND_URL:
-            # Construir los filtros como query params para el backend
             params = {
                 "status": "pending",
             }
-            if salary > 0:
-                params["salary"] = salary
-            if modalities:
-                params["modalities"] = ','.join(modalities)
+            for modality, min_salary in FILTERS.items():
+                params[modality] = min_salary
 
             response = requests.get(f"{BACKEND_URL}/jobs", params=params)
             return response.json() if response.status_code == 200 else []
