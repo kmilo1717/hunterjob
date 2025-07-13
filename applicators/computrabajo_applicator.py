@@ -10,7 +10,7 @@ from utils.webdriver_utils import get_chrome_options, get_firefox_options
 from utils.utils import setup_logger
 from services.computrabajo_service import ComputrabajoService
 from config import BROWSER, COMPUTRABAJO_URL
-
+from repositories.factory import get_repository
 
 class ComputrabajoApplicator(IApplicator):
     def __init__(self, job_id):
@@ -26,7 +26,7 @@ class ComputrabajoApplicator(IApplicator):
             options = get_chrome_options()
             driver = webdriver.Chrome(options=options)
 
-        db = Database()
+        db = get_repository()
         driver.get(self.url)
 
         compputrabajo_service = ComputrabajoService()

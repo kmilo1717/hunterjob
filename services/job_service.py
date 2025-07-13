@@ -1,5 +1,5 @@
-from datasources.job_api import JobApi
-from datasources.job_repository import JobRepository
+from repositories.job.job_api import JobApi
+from repositories.job.job_repository import JobRepository
 from config import BACKEND_URL
 from database.database import Database
 class JobService:

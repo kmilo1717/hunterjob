@@ -1,5 +1,5 @@
 from migrations.create_table_jobs import create_table_jobs
-from database.database import Database
+from repositories.factory import get_repository
 
 # Secuencia de migraciones
 secuence = {
@@ -11,8 +11,9 @@ def migrations_handler():
     sync_migrations_table()
 
 def create_migrations_table():
+    db = get_repository()
     """Crea la tabla de migraciones si no existe."""
-    Database().execute_query("""
+    db.execute_query("""
     CREATE TABLE IF NOT EXISTS migrations (
         id INTEGER PRIMARY KEY,
         migration_name TEXT NOT NULL,
@@ -22,7 +23,7 @@ def create_migrations_table():
 
 def sync_migrations_table():
     """Verifica si las migraciones ya han sido aplicadas y las ejecuta si es necesario."""
-    db = Database()
+    db = get_repository()
     applied_migrations = db.fetch_all("SELECT migration_name FROM migrations")
     applied_migrations_set = set([migration['migration_name'] for migration in applied_migrations])
 
