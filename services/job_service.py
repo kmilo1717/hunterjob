@@ -7,8 +7,8 @@ class JobService:
         db = Database() if not BACKEND_URL else None
         self.data_source = JobApi() if BACKEND_URL else JobRepository(db)
 
-    def get_vacancies(self):
-        return self.data_source.get_vacancies()
+    def get_vacancies(self, salary=0, modalities=None, schedules=None):
+        return self.data_source.get_vacancies(salary, modalities, schedules)
 
     def apply_job(self, status, job_id):
         return self.data_source.apply_job(status, job_id)

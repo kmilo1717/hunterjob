@@ -24,7 +24,7 @@ def create_migrations_table():
 def sync_migrations_table():
     """Verifica si las migraciones ya han sido aplicadas y las ejecuta si es necesario."""
     db = get_repository()
-    applied_migrations = db.fetch_all("SELECT migration_name FROM migrations")
+    applied_migrations = db.fetch_all("migrations")
     applied_migrations_set = set([migration['migration_name'] for migration in applied_migrations])
 
     for migration_name, migration_func in secuence.items():

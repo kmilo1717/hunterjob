@@ -3,9 +3,12 @@ from config import BACKEND_URL, FILTERS
 from core.interfaces import IJobDataSource
 
 class JobApi(IJobDataSource):
-    def get_vacancies(self):
+    def get_vacancies(self, salary=0, modalities=None, schedules=None):
         params = {"status": "pending"}
-        for modality, min_salary in FILTERS.items():
+        params["salary"] = salary
+        if schedules:
+            params["schedules"] = ','.join(schedules)
+        for modality, min_salary in modalities:
             params[modality] = min_salary
 
         response = requests.get(f"{BACKEND_URL}/jobs", params=params)

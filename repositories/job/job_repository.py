@@ -4,7 +4,7 @@ class JobRepository(IJobDataSource):
     def __init__(self, db):
         self.db = db
 
-    def get_vacancies(self, salary=0, modalities=None):
+    def get_vacancies(self, salary=0, modalities=None, schedules=None):
         query = "SELECT * FROM jobs WHERE status = 'pending'"
         values = []
 
@@ -16,6 +16,11 @@ class JobRepository(IJobDataSource):
             placeholders = ','.join('?' for _ in modalities)
             query += f" AND modality IN ({placeholders})"
             values.extend(modalities)
+        
+        if schedules:
+            placeholders = ','.join('?' for _ in schedules)
+            query += f" AND schedule IN ({placeholders})"
+            values.extend(schedules)
 
         return self.db.fetch_all("jobs", query, tuple(values))
 
