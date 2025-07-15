@@ -17,7 +17,7 @@ class IService(ABC):
 
 class IJobDataSource(ABC):
     @abstractmethod
-    def get_vacancies(self, salary=0, modalities=None, schedules=None):
+    def get_vacancies(self, modalities=None, schedules=None):
         pass
 
     @abstractmethod

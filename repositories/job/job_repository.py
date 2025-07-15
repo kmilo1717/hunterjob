@@ -4,18 +4,18 @@ class JobRepository(IJobDataSource):
     def __init__(self, db):
         self.db = db
 
-    def get_vacancies(self, salary=0, modalities=None, schedules=None):
+    def get_vacancies(self, modalities=None, schedules=None):
         query = "SELECT * FROM jobs WHERE status = 'pending'"
         values = []
 
-        if salary > 0:
-            query += " AND (salary_int = 0 OR salary_int >= ?)"
-            values.append(salary)
+        if modalities is None:
+            modalities = {}
 
         if modalities:
-            placeholders = ','.join('?' for _ in modalities)
-            query += f" AND modality IN ({placeholders})"
-            values.extend(modalities)
+            for modality, min_salary in modalities.items():
+                query += "AND ((salary >= ? OR salary = 0) AND modality = ?)"
+                values.append(min_salary)
+                values.append(modality)
         
         if schedules:
             placeholders = ','.join('?' for _ in schedules)

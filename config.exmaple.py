@@ -6,10 +6,12 @@ load_dotenv()
 # Variables de configuración
 BROWSER = 'Chrome'  # Puede ser 'Chrome', 'Firefox'
 INTEREST_JOBS = ['php', 'laravel']
-FILTERS = {
-    'MIN_SALARY': 3000000,
-    'MODALITY': ['Remoto', 'Presencial y remoto'],
+MODALITIES = {
+    'Hybrid': 4000000,
+    'Remote': 2000000,
+    'Onsite': 5000000
 }
+SCHEDULES = ['Tiempo Parcial', 'Tiempo Completo', 'Por Horas']
 EXCLUDE = [
     'vendedor',
 ]
