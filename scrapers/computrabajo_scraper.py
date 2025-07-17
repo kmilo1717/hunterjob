@@ -4,7 +4,7 @@ from selenium.webdriver.support.ui import WebDriverWait # type: ignore
 from selenium.webdriver.support import expected_conditions as EC # type: ignore
 from selenium.common.exceptions import TimeoutException # type: ignore
 from core.interfaces import IScraper
-from database.database import Database
+from repositories.factory import get_repository
 import time
 from config import EXCLUDE, BROWSER, COMPUTRABAJO_URL, BACKEND_URL
 from utils.webdriver_utils import get_chrome_options, get_firefox_options
@@ -13,7 +13,7 @@ from services.computrabajo_service import ComputrabajoService
 
 class ComputrabajoScraper(IScraper):
     def __init__(self):
-        self.db = Database()
+        self.db = get_repository()
         self.logger = setup_logger(__name__)
         self.url = COMPUTRABAJO_URL
         

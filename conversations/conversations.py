@@ -3,7 +3,7 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ConversationHandler, ContextTypes
 from scrapers.computrabajo_scraper import ComputrabajoScraper
 from applicators.computrabajo_applicator import ComputrabajoApplicator
-from config import INTEREST_JOBS
+from config import INTEREST_JOBS, SCHEDULES, MODALITIES
 from patterns import PATTERN_COMPUTRABAJO, PATTERN_LINKEDIN, PATTERN_UPDATE_DB, PATTERN_SHOW_VACANTES, PATTERN_USER_DECISION, PATTERN_RETURN_MENU
 from services.job_service import JobService
 from utils.utils import setup_logger, highlights
@@ -60,7 +60,7 @@ async def choose_data_or_apply(update: Update, context: ContextTypes.DEFAULT_TYP
             return await choose_scraper(update, context)
 
         elif query.data == PATTERN_SHOW_VACANTES:
-            context.user_data['vacantes'] = JobService().get_vacancies()
+            context.user_data['vacantes'] = JobService().get_vacancies(MODALITIES, SCHEDULES)
             context.user_data['current_index'] = 0
             return await show_next_vacancy(update, context, query=query)
 

@@ -1,4 +1,4 @@
-from database.database import Database
+from repositories.factory import get_repository
 from core.interfaces import IService
 from utils.utils import setup_logger
 from models.job import Job
@@ -6,7 +6,7 @@ import json
 from config import COOKIE_UCA
 class ComputrabajoService(IService):
     def __init__(self):
-        self.db = Database()
+        self.db = get_repository()
         self.logger = setup_logger(__name__)
         self.context = "computrabajo"
     

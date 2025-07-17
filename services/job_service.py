@@ -1,39 +1,14 @@
+from repositories.job.job_api import JobApi
+from repositories.job.job_repository import JobRepository
+from config import BACKEND_URL
 from database.database import Database
-from config import FILTERS, BACKEND_URL
-import requests
-
 class JobService:
     def __init__(self):
-        self.db = Database()
+        db = Database() if not BACKEND_URL else None
+        self.data_source = JobApi() if BACKEND_URL else JobRepository(db)
 
-    def get_vacancies(self):
-        if BACKEND_URL:
-            params = {
-                "status": "pending",
-            }
-            for modality, min_salary in FILTERS.items():
-                params[modality] = min_salary
-
-            response = requests.get(f"{BACKEND_URL}/jobs", params=params)
-            return response.json() if response.status_code == 200 else []
-
-        query = "SELECT * FROM jobs WHERE status = 'pending'"
-        values = []
-
-        if salary > 0:
-            query += " AND (salary_int = 0 OR salary_int >= ?)"
-            values.append(salary)
-
-        if modalities:
-            placeholders = ','.join('?' for _ in modalities)
-            query += f" AND modality IN ({placeholders})"
-            values.extend(modalities)
-
-        return self.db.fetch_all("jobs", query, tuple(values))
+    def get_vacancies(self, modalities=None, schedules=None):
+        return self.data_source.get_vacancies(modalities, schedules)
 
     def apply_job(self, status, job_id):
-        if BACKEND_URL:
-            response = requests.put(f"{BACKEND_URL}/jobs/{job_id}", json={"status": status})
-            return response.status_code == 204
-        self.db.execute_query("UPDATE jobs SET status = ? WHERE job_id = ?", (status, job_id))
-        return True
+        return self.data_source.apply_job(status, job_id)

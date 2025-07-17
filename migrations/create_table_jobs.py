@@ -1,6 +1,7 @@
-from database.database import Database
+from repositories.factory import get_repository
 def create_table_jobs():
-    Database().execute_query("""
+    repo = get_repository()
+    repo.execute_query("""
         CREATE TABLE IF NOT EXISTS "jobs" (
             "id"	INTEGER,
             "title"	TEXT,
