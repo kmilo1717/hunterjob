@@ -87,7 +87,7 @@ async def show_next_vacancy(update: Update, context: ContextTypes.DEFAULT_TYPE, 
 
         vacante = dict(vacantes[current_index])
         response = ""
-        
+        response += f"🔍 <b>{len(vacantes)} vacantes faltantes para revisar.</b> \n"
         if 'url' in vacante and vacante['url']:
             response += f"🔗 {vacante['url']}\n"
         if 'description' in vacante and vacante['description']:
